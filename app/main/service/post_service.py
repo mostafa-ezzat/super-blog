@@ -96,6 +96,7 @@ def add_remove_like(post_id):
     return response_object
 
 
+# remove post only if admin
 @admin_token_required
 def remove_post(post_id):
     post = get_a_post(post_id)
