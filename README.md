@@ -1,2 +1,2 @@
-# super-blog <3
+# super-blog <
 blog created with flask
