@@ -2,7 +2,8 @@ from flask import request
 from flask_restplus import Resource
 
 from ..util.dto import UserDto
-from ..service.user_service import save_new_user, get_all_users, get_a_user
+from ..service.user_service import save_new_user, get_all_users, get_a_user, save_thumbnail
+from app.main.util.file_parse import jpeg_upload
 
 api = UserDto.api
 _user = UserDto.user
@@ -38,3 +39,12 @@ class User(Resource):
         """get a user given its identifier"""
         user = get_a_user(public_id)
         return user
+
+
+@api.route('/thumbnail/upload')
+class my_file_upload(Resource):
+    @api.expect(jpeg_upload)
+    def post(self):
+        args = jpeg_upload.parse_args()
+        res = save_thumbnail(args)
+        return res

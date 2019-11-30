@@ -6,9 +6,11 @@ from flask_script import Manager
 
 from app.main import create_app, db
 from app import blueprint
+from flask import g
 
 app = create_app(os.getenv('BOILERPLATE_ENV') or 'dev')
 app.register_blueprint(blueprint)
+
 
 app.app_context().push()
 

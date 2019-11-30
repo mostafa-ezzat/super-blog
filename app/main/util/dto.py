@@ -1,5 +1,5 @@
 from flask_restplus import Namespace, fields
-from app.main.util.custome_fields import TimeFormat, CountFormat
+from app.main.util.custome_fields import TimeFormat
 
 # User Marshalling
 
@@ -7,10 +7,11 @@ from app.main.util.custome_fields import TimeFormat, CountFormat
 class UserDto:
     api = Namespace('user', description='user related operations')
     user = api.model('user', {
-        'email': fields.String(required=True, description='user email address'),
-        'username': fields.String(required=True, description='user username'),
-        'password': fields.String(required=True, description='user password'),
-        'public_id': fields.String(description='user Identifier')
+        'email': fields.String(required=True, description='User email address'),
+        'username': fields.String(required=True, description='User username'),
+        'password': fields.String(required=True, description='User password'),
+        'public_id': fields.String(description='User Identifier'),
+        'thumbnail': fields.String(description='User Thumbnail')
     })
 
     user_name = api.model('author', {
@@ -61,7 +62,7 @@ class CommentDto:
     })
 
 
-CommentDto.res_comment = CommentDto.comment.clone('rescomment', {
+CommentDto.rescomment = CommentDto.comment.clone('comment', {
     'reply': fields.Nested(CommentDto.comment)
 })
 

@@ -1,11 +1,15 @@
 import uuid
+import os
 import datetime
+from flask import request
 
 from app.main import db
 from app.main.model.user import User
 
-from app.main.util.dry_util import create_response
+from app.main.util.dry_util import create_response, thumbnail_resize, thumbnail_loc
 from app.main.util.validate import Validate
+from ..util.decorator import token_required
+from app.main.service.auth_helper import Auth
 
 valid = Validate()
 
@@ -68,3 +72,35 @@ def generate_token(user):
             'message': 'Some error occurred. Please try again.'
         }
         return response_object, 401
+
+
+@token_required
+def save_thumbnail(args):
+
+    user_id = Auth.get_logged_in_user(request)[0]['data']['user_id']
+    check_user = User.query.filter_by(id=user_id).first()
+    if not check_user:
+        response_object = create_response('fail', 'please login first')
+        return response_object
+
+    img = args['thumbnail']
+    img_type = img.mimetype
+
+    img_name = ''
+
+    if img_type == 'image/jpeg':
+        img_name = thumbnail_resize(img)
+
+    if img_name:
+        old_image = check_user.thumbnail
+        check_user.thumbnail = img_name
+        db.session.commit()
+        if old_image:
+            full_old_path = f"{thumbnail_loc}\\{old_image}"
+            if os.path.isfile(full_old_path):
+                os.remove(full_old_path)
+        response_object = create_response('success', 'your thumbnail updated')
+        return response_object
+
+    response_object = create_response('fail', 'please make shoure ur image type is jpg/jpeg')
+    return response_object
